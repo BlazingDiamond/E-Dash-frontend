@@ -1,32 +1,3 @@
-<<<<<<< HEAD
-//main home screen
-import { Image } from "expo-image";
-import { Platform, StyleSheet, Button } from "react-native";
-import { useRouter } from "expo-router";
-import { HelloWave } from "@/components/hello-wave";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Link } from "expo-router";
-
-export default function HomeScreen() {
-  const router = useRouter();
-  const Home = () => {
-    router.push("/modal");
-  };
-  Home();
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <Button title="Smitswinkel" onPress={() => router.push("/restuarants")} />
-=======
 // main home screen
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -155,31 +126,11 @@ export default function HomeScreen() {
         </ThemedView>
       </Pressable>
 
->>>>>>> d0b1a7c (bingle dingle)
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-});
-=======
   headerContainer: {
     padding: 20,
     paddingTop: 60,
@@ -295,4 +246,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
->>>>>>> d0b1a7c (bingle dingle)
