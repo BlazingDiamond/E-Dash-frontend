@@ -1,28 +1,28 @@
-import React, { useState, useRef, useEffect } from "react";
+import starIcon from "@/assets/images/Star1.png";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
+  Dimensions,
   Image,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+  KeyboardAvoidingView,
+  NativeSyntheticEvent,
+  Platform,
   SafeAreaView,
   StatusBar,
-  KeyboardAvoidingView,
-  Platform,
-  Dimensions,
-  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  TextInput,
   TextInputKeyPressEventData,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import starIcon from "@/assets/images/Star1.png";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SLIDE_DURATION = 380;
