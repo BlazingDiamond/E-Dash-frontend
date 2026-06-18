@@ -1,4 +1,5 @@
 import starIcon from "@/assets/images/Star1.png";
+import mapIcon from "@/assets/images/map-marker-2 1.png";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -29,11 +30,15 @@ const SLIDE_DURATION = 380;
 const CODE_LENGTH = 6;
 const EMPTY_CODE = Array(CODE_LENGTH).fill("");
 
+type OnboardingStep = 0 | 1 | 2 | 3;
+
 const PhoneNumberScreen: React.FC = () => {
-  const [step, setStep] = useState<0 | 1>(0);
+  const [step, setStep] = useState<OnboardingStep>(0);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [codeDigits, setCodeDigits] = useState<string[]>([...EMPTY_CODE]);
-  const [isPhoneFocused, setIsPhoneFocused] = useState(false);
+  const [focusedField, setFocusedField] = useState<
+    "phone" | "name" | "nickname" | null
+  >(null);
   const [focusedCodeIndex, setFocusedCodeIndex] = useState(0);
 
   const slideOffset = useSharedValue(0);
@@ -41,7 +46,8 @@ const PhoneNumberScreen: React.FC = () => {
   const router = useRouter();
   const [secondsLeft, setSecondsLeft] = useState(60);
   const [isActive, setIsActive] = useState(false);
-
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -75,25 +81,43 @@ const PhoneNumberScreen: React.FC = () => {
     return () => clearTimeout(timer);
   }, [step]);
 
-  const handleContinue = () => {
-    if (step === 0) {
-      slideOffset.value = withTiming(-SCREEN_WIDTH, {
-        duration: SLIDE_DURATION,
-        easing: Easing.out(Easing.cubic),
-      });
-      setStep(1);
-      return;
-    }
-
-    console.log("Verification code submitted:", verificationCode);
-  };
-
-  const handleBack = () => {
-    slideOffset.value = withTiming(0, {
+  const slideToStep = (nextStep: OnboardingStep) => {
+    slideOffset.value = withTiming(-SCREEN_WIDTH * nextStep, {
       duration: SLIDE_DURATION,
       easing: Easing.out(Easing.cubic),
     });
-    setStep(0);
+    setStep(nextStep);
+  };
+
+  const handleContinue = () => {
+    if (step === 0) {
+      slideToStep(1);
+      return;
+    }
+
+    if (step === 1) {
+      slideToStep(2);
+      return;
+    }
+
+    if (step === 2) {
+      slideToStep(3);
+      return;
+    }
+
+    router.push("/");
+  };
+
+  const handleBack = () => {
+    if (step === 3) {
+      slideToStep(2);
+      return;
+    } else if (step === 2) {
+      slideToStep(1);
+      return;
+    }
+
+    slideToStep(0);
   };
 
   const handleSkip = () => {
@@ -111,7 +135,9 @@ const PhoneNumberScreen: React.FC = () => {
   const handlePhoneChange = (text: string) => {
     setPhoneNumber(formatPhoneNumber(text));
   };
-
+  const handleNameChange = (text: string) => {
+    setName(text);
+  };
   const handleCodeDigitChange = (text: string, index: number) => {
     const digits = text.replace(/\D/g, "");
 
@@ -170,7 +196,13 @@ const PhoneNumberScreen: React.FC = () => {
   }));
 
   const isContinueActive =
-    step === 0 ? phoneNumber.length > 0 : verificationCode.length === 6;
+    step === 0
+      ? phoneNumber.length > 0
+      : step === 1
+      ? verificationCode.length === 6
+      : step === 2
+      ? name.length > 0 && nickname.length > 0
+      : true;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -180,7 +212,7 @@ const PhoneNumberScreen: React.FC = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <View style={styles.header}>
-          {step === 1 ? (
+          {step > 0 ? (
             <TouchableOpacity onPress={handleBack} style={styles.backButton}>
               <Ionicons name="chevron-back" size={24} color="#888888" />
             </TouchableOpacity>
@@ -206,15 +238,15 @@ const PhoneNumberScreen: React.FC = () => {
               <TextInput
                 style={[
                   styles.phoneInput,
-                  isPhoneFocused && styles.phoneInputFocused,
+                  focusedField === "phone" && styles.phoneInputFocused,
                 ]}
                 placeholder="XXX XXX XXXX"
                 placeholderTextColor="#AAAAAA"
                 keyboardType="phone-pad"
                 value={phoneNumber}
                 onChangeText={handlePhoneChange}
-                onFocus={() => setIsPhoneFocused(true)}
-                onBlur={() => setIsPhoneFocused(false)}
+                onFocus={() => setFocusedField("phone")}
+                onBlur={() => setFocusedField(null)}
                 maxLength={12}
                 returnKeyType="done"
               />
@@ -260,10 +292,60 @@ const PhoneNumberScreen: React.FC = () => {
                 </Text>
               </Text>
             </View>
+
+            <View style={styles.stepPanel}>
+              <Text style={styles.title}>What should we call{"\n"}you?</Text>
+              <Text style={styles.subtitle}>
+                This is how you'll appear to your driver and on{"\n"}your
+                profile.
+              </Text>
+              {/* Your permanent, styleable text */}
+              <Text style={styles.prefixText}>First Name</Text>
+              <TextInput
+                style={[
+                  styles.inputContainer,
+                  focusedField === "name" && styles.inputContainerFocused,
+                ]}
+                placeholder="Enter your full name"
+                placeholderTextColor="#AAAAAA"
+                keyboardType="default"
+                value={name}
+                onChangeText={setName}
+                onFocus={() => setFocusedField("name")}
+                onBlur={() => setFocusedField(null)}
+                returnKeyType="done"
+              />
+              <Text style={styles.prefixText}>Nickname</Text>
+              <TextInput
+                style={[
+                  styles.inputContainer,
+                  focusedField === "nickname" && styles.inputContainerFocused,
+                ]}
+                placeholder="Your prefered name"
+                placeholderTextColor="#AAAAAA"
+                keyboardType="default"
+                value={nickname}
+                onChangeText={setNickname}
+                onFocus={() => setFocusedField("nickname")}
+                onBlur={() => setFocusedField(null)}
+                returnKeyType="done"
+              />
+            </View>
+            <View style={styles.stepPanel}>
+              <Text style={styles.title}>Find Your Local{"\n"}Favorites</Text>
+              <Text style={styles.subtitle}>
+                This helps us show you restaurants in your area and ensures your
+                driver finds the right spot.
+              </Text>
+            </View>
           </Animated.View>
         </View>
 
         <View style={styles.footer}>
+          <Image
+            source={mapIcon}
+            style={[styles.mapIcon, { display: step === 3 ? "flex" : "none" }]}
+          />
           <TouchableOpacity
             style={[
               styles.continueButton,
@@ -273,7 +355,9 @@ const PhoneNumberScreen: React.FC = () => {
             activeOpacity={0.85}
             disabled={!isContinueActive}
           >
-            <Text style={styles.continueText}>Continue</Text>
+            <Text style={styles.continueText}>
+              {step === 3 ? "Share Location" : "Continue"}
+            </Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -292,7 +376,7 @@ const styles = StyleSheet.create({
   codeText: {
     fontWeight: "400",
     color: "#BDBDBD",
-    paddingTop: 16,
+    paddingTop: 24,
   },
   retry: {
     color: "#0047AB",
@@ -305,6 +389,13 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     minHeight: 110, // Gives a stable block for your centered icon
     position: "relative",
+  },
+  mapIcon: {
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginBottom: 200,
+    width: 167,
+    height: 160,
   },
   starIcon: {
     resizeMode: "contain",
@@ -333,10 +424,11 @@ const styles = StyleSheet.create({
   },
   slideRow: {
     flexDirection: "row",
-    width: SCREEN_WIDTH * 2,
+    width: SCREEN_WIDTH * 3,
     flex: 1,
   },
   stepPanel: {
+    gap: 8,
     width: SCREEN_WIDTH,
     paddingHorizontal: 24,
     paddingTop: 13,
@@ -355,6 +447,36 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 40,
   },
+  inputContainer: {
+    backgroundColor: "#F2F2F2",
+    borderRadius: 5,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    fontSize: 16,
+    color: "#222222",
+    borderWidth: 1.5,
+    borderColor: "transparent",
+  },
+  inputContainerFocused: {
+    borderColor: "#0047AB",
+    backgroundColor: "#F7F7FF",
+    shadowColor: "#0047AB",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 10,
+  },
+  prefixText: {
+    fontSize: 16,
+    color: "#222222",
+    fontWeight: "600",
+  },
+  nameInput: {
+    backgroundColor: "#F2F2F2",
+    fontSize: 16,
+    color: "#222222",
+  },
+
   phoneInput: {
     backgroundColor: "#F2F2F2",
     borderRadius: 12,

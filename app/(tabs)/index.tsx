@@ -1,76 +1,99 @@
 // main home screen
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import ParallaxScrollView from "@/components/parallax-scroll-view";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  // const tempPush = () => {
+  //   router.push({
+  //     pathname: "/(tabs)/restuarants",
+  //     params: { category: "sushi" },
+  //   });
+  // };
+  // tempPush();
 
   // Handle category button presses (Blue Square Section)
   const handleCategoryPress = (categoryName: string) => {
     // Navigates to your restaurants tab and passes the selected category
     router.push({
-      pathname: '/(tabs)/restuarants',
-      params: { category: categoryName.toLowerCase() }
+      pathname: "/(tabs)/restuarants",
+      params: { category: categoryName.toLowerCase() },
     });
   };
 
   // Handle restaurant card presses
   const handleRestaurantPress = (restaurantId: string) => {
     router.push({
-      pathname: '/(tabs)/restuarants',
-      params: { id: restaurantId }
+      pathname: "/(tabs)/restuarants",
+      params: { id: restaurantId },
     });
   };
 
   // Static data array for categories to keep the layout code clean
   const categories = [
-    { name: 'Sushi', image: require('@/assets/images/Sushi.png') },
-    { name: 'Pizza', image: require('@/assets/images/Pizza.png') },
-    { name: 'Italian', image: require('@/assets/images/Italian.png') },
-    { name: 'Chinese', image: require('@/assets/images/Chinese.png') },
+    { name: "Sushi", image: require("@/assets/images/Sushi.png") },
+    { name: "Pizza", image: require("@/assets/images/Pizza.png") },
+    { name: "Italian", image: require("@/assets/images/Italian.png") },
+    { name: "Chinese", image: require("@/assets/images/Chinese.png") },
   ];
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#FFFFFF', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: "#FFFFFF", dark: "#1D3D47" }}
       headerImage={
         <ThemedView style={styles.headerContainer}>
-           <ThemedText type="defaultSemiBold">Search for an address</ThemedText>
-           <ThemedText>Enter your address</ThemedText>
+          <ThemedText type="defaultSemiBold">Search for an address</ThemedText>
+          <ThemedText>Enter your address</ThemedText>
         </ThemedView>
-      }>
-
+      }
+    >
       {/* 1. Search Bar */}
       <ThemedView style={styles.searchSection}>
-        <Ionicons name="search-outline" size={20} color="#bab9b9" style={styles.searchIcon} />
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Food, restaurants, categories..." 
+        <Ionicons
+          name="search-outline"
+          size={20}
+          color="#bab9b9"
+          style={styles.searchIcon}
+        />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Food, restaurants, categories..."
           placeholderTextColor="#888"
         />
       </ThemedView>
 
       {/* 2. Categories Horizontal Scroll (The buttons inside your Blue Square) */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoriesContainer}
+      >
         {categories.map((item) => (
-          <Pressable 
-            key={item.name} 
+          <Pressable
+            key={item.name}
             style={({ pressed }) => [
               styles.categoryItem,
-              pressed && styles.categoryPressed // Visual feedback when tapped
+              pressed && styles.categoryPressed, // Visual feedback when tapped
             ]}
             onPress={() => handleCategoryPress(item.name)}
           >
             <View style={styles.categoryCircle}>
               {/* Added Image inside the circle to match your screenshot icons */}
-              <Image 
-                source={item.image} 
-                style={styles.categoryIcon} 
+              <Image
+                source={item.image}
+                style={styles.categoryIcon}
                 contentFit="contain"
               />
             </View>
@@ -85,14 +108,14 @@ export default function HomeScreen() {
       </ThemedView>
 
       {/* Smitswinkel Card */}
-      <Pressable 
-        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]} 
-        onPress={() => handleRestaurantPress('smitswinkel')}
+      <Pressable
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+        onPress={() => handleRestaurantPress("smitswinkel")}
       >
         <View style={styles.imageContainer}>
-          <Image 
-            source={require('@/assets/images/smitswinkel-header.png')} 
-            style={styles.cardImage} 
+          <Image
+            source={require("@/assets/images/smitswinkel-header.png")}
+            style={styles.cardImage}
           />
           <View style={styles.ratingBadge}>
             <ThemedText style={styles.ratingText}>⭐ 4.1 (2700+)</ThemedText>
@@ -100,20 +123,21 @@ export default function HomeScreen() {
         </View>
         <ThemedView style={styles.cardInfo}>
           <ThemedText type="defaultSemiBold" style={styles.restaurantTitle}>
-            Smitswinkel • <ThemedText style={styles.deliveryTime}>🕒 25-40 min</ThemedText>
+            Smitswinkel •{" "}
+            <ThemedText style={styles.deliveryTime}>🕒 25-40 min</ThemedText>
           </ThemedText>
         </ThemedView>
       </Pressable>
 
       {/* Karoopot Card */}
-      <Pressable 
-        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]} 
-        onPress={() => handleRestaurantPress('karoopot')}
+      <Pressable
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+        onPress={() => handleRestaurantPress("karoopot")}
       >
         <View style={styles.imageContainer}>
-          <Image 
-            source={require('@/assets/images/karoopot-header.png')} 
-            style={styles.cardImage} 
+          <Image
+            source={require("@/assets/images/karoopot-header.png")}
+            style={styles.cardImage}
           />
           <View style={styles.ratingBadge}>
             <ThemedText style={styles.ratingText}>⭐ 4.0 (800+)</ThemedText>
@@ -121,11 +145,11 @@ export default function HomeScreen() {
         </View>
         <ThemedView style={styles.cardInfo}>
           <ThemedText type="defaultSemiBold" style={styles.restaurantTitle}>
-            Karoopot • <ThemedText style={styles.deliveryTime}>🕒 25-40 min</ThemedText>
+            Karoopot •{" "}
+            <ThemedText style={styles.deliveryTime}>🕒 25-40 min</ThemedText>
           </ThemedText>
         </ThemedView>
       </Pressable>
-
     </ParallaxScrollView>
   );
 }
@@ -136,12 +160,12 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   searchSection: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    flexDirection: "row",
+    backgroundColor: "#ffffff",
     borderRadius: 25,
     marginHorizontal: 16,
     paddingHorizontal: 15,
-    alignItems: 'center',
+    alignItems: "center",
     height: 50,
     marginBottom: 20,
   },
@@ -157,7 +181,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryItem: {
-    alignItems: 'center',
+    alignItems: "center",
     marginRight: 20,
   },
   categoryPressed: {
@@ -168,13 +192,13 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     marginBottom: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     // Soft shadow around food circles to match UI design
     elevation: 2,
-    shadowColor: '#ffffff',
+    shadowColor: "#ffffff",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -185,44 +209,44 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 13,
-    fontWeight: '500',
-    color: '#ff0000',
+    fontWeight: "500",
+    color: "#ff0000",
   },
   sectionHeader: {
     paddingHorizontal: 16,
     marginBottom: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   card: {
     marginHorizontal: 16,
     marginBottom: 20,
     borderRadius: 15,
-    overflow: 'hidden',
-    backgroundColor: '#ffffff',
-    elevation: 2, 
-    shadowColor: '#ffffff',
+    overflow: "hidden",
+    backgroundColor: "#ffffff",
+    elevation: 2,
+    shadowColor: "#ffffff",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
   cardPressed: {
     opacity: 0.9,
-    transform: [{ scale: 0.99 }], 
+    transform: [{ scale: 0.99 }],
   },
   imageContainer: {
-    position: 'relative',
-    width: '100%',
+    position: "relative",
+    width: "100%",
     height: 180,
   },
   cardImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   ratingBadge: {
-    position: 'absolute',
-    bottom: 15, 
+    position: "absolute",
+    bottom: 15,
     right: 15,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 15,
@@ -230,8 +254,8 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontWeight: "bold",
+    color: "#000000",
   },
   cardInfo: {
     paddingVertical: 12,
@@ -239,10 +263,10 @@ const styles = StyleSheet.create({
   },
   restaurantTitle: {
     fontSize: 16,
-    color: '#000000',
+    color: "#000000",
   },
   deliveryTime: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 14,
   },
 });
