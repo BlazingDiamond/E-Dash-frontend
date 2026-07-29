@@ -5,6 +5,7 @@ import { ThemedView } from "@/components/themed-view";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -12,9 +13,11 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSelectedId } from "@/constants/logic";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { selectedID } = useSelectedId();
 
   // const tempPush = () => {
   //   router.push({
@@ -110,7 +113,10 @@ export default function HomeScreen() {
       {/* Smitswinkel Card */}
       <Pressable
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-        onPress={() => handleRestaurantPress("smitswinkel")}
+        onPress={() => {
+          handleRestaurantPress("smitswinkel");
+          selectedID("1");
+        }}
       >
         <View style={styles.imageContainer}>
           <Image
@@ -132,7 +138,10 @@ export default function HomeScreen() {
       {/* Karoopot Card */}
       <Pressable
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-        onPress={() => handleRestaurantPress("karoopot")}
+        onPress={() => {
+          handleRestaurantPress("karoopot");
+          selectedID("2");
+        }}
       >
         <View style={styles.imageContainer}>
           <Image
